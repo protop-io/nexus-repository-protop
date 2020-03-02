@@ -1,0 +1,60 @@
+{
+  "objects": [
+    {
+      "package": {
+        "name": "yargs",
+        "version": "6.6.0",
+        "description": "yargs the modern, pirate-themed, successor to optimist.",
+        "keywords": [
+          "argument",
+          "args",
+          "option",
+          "parser",
+          "parsing",
+          "cli",
+          "command"
+        ],
+        "date": "2016-12-30T16:53:16.023Z",
+        "links": {
+          "protop": "https://www.protop.io/package/foo",
+          "homepage": "http://foo.org/proto",
+          "repository": "https://github.com/foo/foo",
+          "bugs": "https://github.com/foo/foo/issues"
+        },
+        "publisher": {
+          "username": "idk",
+          "email": "idk@protop.io"
+        },
+        "maintainers": [
+          {
+            "username": "idk",
+            "email": "idk@protop.io"
+          },
+          {
+            "username": "ok",
+            "email": "ok@protop.io"
+          },
+          {
+            "username": "hmm",
+            "email": "hmm@protop.io"
+          },
+          {
+            "username": "nylen",
+            "email": "jnylen@gmail.com"
+          }
+        ]
+      },
+      "score": {
+        "final": 0.9237841281241451,
+        "detail": {
+          "quality": 0.9270640902288084,
+          "popularity": 0.8484861649808381,
+          "maintenance": 0.9962706951777409
+        }
+      },
+      "searchScore": 100000.914
+    }
+  ],
+  "total": 1,
+  "time": "Fri Feb 28 2020 15:15:15 GMT+0000 (UTC)"
+}
