@@ -1,23 +1,11 @@
-/*
- * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2008-present Sonatype, Inc.
- * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
- *
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
- * which accompanies this distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
- *
- * Sonatype Nexus (TM) Professional Version is available from Sonatype, Inc. "Sonatype" and "Sonatype Nexus" are trademarks
- * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
- * Eclipse Foundation. All other trademarks are the property of their respective owners.
- */
+
 package org.sonatype.nexus.repository.protop.internal;
 
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import com.google.common.collect.ImmutableMap;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 import org.sonatype.goodies.testsupport.TestSupport;
 import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.blobstore.api.BlobRef;
@@ -25,18 +13,13 @@ import org.sonatype.nexus.common.collect.NestedAttributesMap;
 import org.sonatype.nexus.common.event.EventManager;
 import org.sonatype.nexus.repository.Format;
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.protop.internal.search.legacy.ProtopSearchIndexInvalidatedEvent;
-import org.sonatype.nexus.repository.storage.Asset;
-import org.sonatype.nexus.repository.storage.AssetBlob;
-import org.sonatype.nexus.repository.storage.Bucket;
-import org.sonatype.nexus.repository.storage.Component;
-import org.sonatype.nexus.repository.storage.StorageTx;
+import org.sonatype.nexus.repository.storage.*;
 import org.sonatype.nexus.transaction.UnitOfWork;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -161,12 +144,12 @@ public class ProtopFacetImplTest extends TestSupport {
     underTest.putRepositoryRoot(assetBlob, null);
 
     verifyAssetCreated(REPOSITORY_ROOT_ASSET);
-    verify(eventManager).post(any(ProtopSearchIndexInvalidatedEvent.class));
+//    verify(eventManager).post(any(ProtopSearchIndexInvalidatedEvent.class));
   }
 
   @Test
   public void testPutTarball() throws Exception {
-    String tarball = "idk-query-string.tgz";
+    String tarball = "idk-query-string.tar.gz";
     underTest.putTarball(projectId.id(), tarball, assetBlob, null);
 
     verify(tx).createAsset(eq(bucket), eq(component));
@@ -178,7 +161,7 @@ public class ProtopFacetImplTest extends TestSupport {
   @Test
   public void testReleaseVersion() throws Exception {
     String version = "1.0.0";
-    String tarball = "idk-query-string-" + version + ".tgz";
+    String tarball = "idk-query-string-" + version + ".tar.gz";
 
     underTest.putTarball(projectId.id(), tarball, assetBlob, null);
 
@@ -188,7 +171,7 @@ public class ProtopFacetImplTest extends TestSupport {
   @Test
   public void testReleaseVersionWithMultiDigit() throws Exception {
     String version = "12.345.6789-beta.15";
-    String tarball = "query-string-" + version + ".tgz";
+    String tarball = "query-string-" + version + ".tar.gz";
 
     underTest.putTarball(projectId.id(), tarball, assetBlob, null);
 
@@ -199,7 +182,7 @@ public class ProtopFacetImplTest extends TestSupport {
   public void testPrereleaseVersion() throws Exception {
     ProtopProjectId packageId = new ProtopProjectId("idk", "query-string");
     String version = "1.0.0-alpha." + System.currentTimeMillis() + ".500-beta";
-    String tarball = "idk-query-string-" + version + ".tgz";
+    String tarball = "idk-query-string-" + version + ".tar.gz";
 
     underTest.putTarball(packageId.id(), tarball, assetBlob, null);
 
@@ -210,7 +193,7 @@ public class ProtopFacetImplTest extends TestSupport {
   public void testVersionWithMetadata() throws Exception {
     ProtopProjectId packageId = new ProtopProjectId("idk", "query-string");
     String version = "1.0.0-alpha." + System.currentTimeMillis() + ".500-beta+meta.data";
-    String tarball = "idk-query-string-" + version + ".tgz";
+    String tarball = "idk-query-string-" + version + ".tar.gz";
 
     underTest.putTarball(packageId.id(), tarball, assetBlob, null);
 

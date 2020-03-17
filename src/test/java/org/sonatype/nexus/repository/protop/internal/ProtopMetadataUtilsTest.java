@@ -1,18 +1,9 @@
-/*
- * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2008-present Sonatype, Inc.
- * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
- *
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
- * which accompanies this distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
- *
- * Sonatype Nexus (TM) Professional Version is available from Sonatype, Inc. "Sonatype" and "Sonatype Nexus" are trademarks
- * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
- * Eclipse Foundation. All other trademarks are the property of their respective owners.
- */
+
 package org.sonatype.nexus.repository.protop.internal;
 
+import java.security.InvalidParameterException;
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.sonatype.goodies.testsupport.TestSupport;
 import org.sonatype.nexus.common.app.BaseUrlHolder;
@@ -32,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ProtopMetadataUtilsTest
     extends TestSupport
@@ -44,15 +35,15 @@ public class ProtopMetadataUtilsTest
 
   @Test
   public void extractTarballName() {
-    assertThat(ProtopMetadataUtils.extractTarballName("somename.tgz"), equalTo("somename.tgz"));
-    assertThat(ProtopMetadataUtils.extractTarballName("package/-/tarball.tgz"), equalTo("tarball.tgz"));
-    assertThat(ProtopMetadataUtils.extractTarballName("@org/package/-/tarball.tgz"), equalTo("tarball.tgz"));
+    assertThat(ProtopMetadataUtils.extractTarballName("somename.tar.gz"), equalTo("somename.tar.gz"));
+    assertThat(ProtopMetadataUtils.extractTarballName("package/-/tarball.tar.gz"), equalTo("tarball.tar.gz"));
+    assertThat(ProtopMetadataUtils.extractTarballName("@org/package/-/tarball.tar.gz"), equalTo("tarball.tar.gz"));
     assertThat(ProtopMetadataUtils.extractTarballName(
-        "http://localhost:8081/repository/protophosted/simple-protop-package/-/simple-protop-package-2.0.1.tgz"),
-        equalTo("simple-protop-package-2.0.1.tgz"));
+        "http://localhost:8081/repository/protophosted/simple-protop-package/-/simple-protop-package-2.0.1.tar.gz"),
+        equalTo("simple-protop-package-2.0.1.tar.gz"));
     assertThat(ProtopMetadataUtils.extractTarballName(
-        "http://localhost:8081/repository/protophosted/@scope/simple-protop-package/-/simple-protop-package-2.0.1.tgz"),
-        equalTo("simple-protop-package-2.0.1.tgz"));
+        "http://localhost:8081/repository/protophosted/@scope/simple-protop-package/-/simple-protop-package-2.0.1.tar.gz"),
+        equalTo("simple-protop-package-2.0.1.tar.gz"));
   }
 
   @Test
@@ -66,9 +57,9 @@ public class ProtopMetadataUtilsTest
     assertNull(ProtopMetadataUtils.extractTarballName(packageMetadata));
 
     packageMetadata.child("versions").child("1.0").child("dist").set("tarball",
-        "http://localhost:8081/repository/protophosted/simple-protop-package/-/simple-protop-package-2.0.1.tgz");
+        "http://localhost:8081/repository/protophosted/simple-protop-package/-/simple-protop-package-2.0.1.tar.gz");
 
-    assertThat(ProtopMetadataUtils.extractTarballName(packageMetadata), equalTo("simple-protop-package-2.0.1.tgz"));
+    assertThat(ProtopMetadataUtils.extractTarballName(packageMetadata), equalTo("simple-protop-package-2.0.1.tar.gz"));
   }
 
   @Test
@@ -179,18 +170,20 @@ public class ProtopMetadataUtilsTest
     packageRoot.set("name", "package");
     packageRoot.child("versions").child("1.0").set("name", "package");
     packageRoot.child("versions").child("1.0").set("version", "1.0");
-    packageRoot.child("versions").child("1.0").child("dist").set("tarball", "http://example.com/path/package-1.0.tgz");
+    packageRoot.child("versions").child("1.0").child("dist").set("tarball", "http://example.com/path/package-1.0.tar.gz");
     packageRoot.child("versions").child("2.0").set("name", "package");
     packageRoot.child("versions").child("2.0").set("version", "2.0");
-    packageRoot.child("versions").child("2.0").child("dist").set("tarball", "http://example.com/path/package-2.0.tgz");
+    packageRoot.child("versions").child("2.0").child("dist").set("tarball", "http://example.com/path/package-2.0.tar.gz");
 
-    NestedAttributesMap v1 = ProtopMetadataUtils.selectVersionByTarballName(packageRoot, "package-1.0.tgz");
-    NestedAttributesMap v2 = ProtopMetadataUtils.selectVersionByTarballName(packageRoot, "package-2.0.tgz");
-    NestedAttributesMap v3 = ProtopMetadataUtils.selectVersionByTarballName(packageRoot, "package-3.0.tgz");
+    NestedAttributesMap v1 = ProtopMetadataUtils.selectVersionByTarballName(packageRoot, "package-1.0.tar.gz")
+            .orElseThrow(() -> new InvalidParameterException("bad test"));
+    NestedAttributesMap v2 = ProtopMetadataUtils.selectVersionByTarballName(packageRoot, "package-2.0.tar.gz")
+            .orElseThrow(() -> new InvalidParameterException("bad test"));
+    Optional<NestedAttributesMap> v3 = ProtopMetadataUtils.selectVersionByTarballName(packageRoot, "package-3.0.tar.gz");
 
-    assertThat(v1.child("dist").get("tarball"), equalTo("http://example.com/path/package-1.0.tgz"));
-    assertThat(v2.child("dist").get("tarball"), equalTo("http://example.com/path/package-2.0.tgz"));
-    assertThat(v3, nullValue());
+    assertThat(v1.child("dist").get("tarball"), equalTo("http://example.com/path/package-1.0.tar.gz"));
+    assertThat(v2.child("dist").get("tarball"), equalTo("http://example.com/path/package-2.0.tar.gz"));
+    assertFalse(v3.isPresent());
   }
 
   @Test
@@ -250,13 +243,13 @@ public class ProtopMetadataUtilsTest
       packageRoot.child("versions").child("1.0").set("org", "org");
       packageRoot.child("versions").child("1.0").set("version", "1.0");
       packageRoot.child("versions").child("1.0").child("dist")
-          .set("tarball", "http://example.com/path/org-package-1.0.tgz");
+          .set("tarball", "http://example.com/path/org-package-1.0.tar.gz");
       packageRoot.child("versions").set("2.0", "incomplete");
 
       ProtopMetadataUtils.rewriteTarballUrl("testRepo", packageRoot);
 
       String rewritten = packageRoot.child("versions").child("1.0").child("dist").get("tarball", String.class);
-      assertThat(rewritten, equalTo("http://localhost:8080/repository/testRepo/org/package/-/org-package-1.0.tgz"));
+      assertThat(rewritten, equalTo("http://localhost:8080/repository/testRepo/org/package/-/org-package-1.0.tar.gz"));
     }
     finally {
       BaseUrlHolder.unset();
@@ -265,7 +258,7 @@ public class ProtopMetadataUtilsTest
 
   @Test
   public void createRepositoryPath() {
-    assertThat(ProtopMetadataUtils.createRepositoryPath("org_a", "pkg", "1.2.3"), is("org_a/pkg/-/org_a-pkg-1.2.3.tgz"));
-    assertThat(ProtopMetadataUtils.createRepositoryPath("foo", "pkg", "1.2.3"), is("foo/pkg/-/foo-pkg-1.2.3.tgz"));
+    assertThat(ProtopMetadataUtils.createRepositoryPath("org_a", "pkg", "1.2.3"), is("org_a/pkg/-/org_a-pkg-1.2.3.tar.gz"));
+    assertThat(ProtopMetadataUtils.createRepositoryPath("foo", "pkg", "1.2.3"), is("foo/pkg/-/foo-pkg-1.2.3.tar.gz"));
   }
 }

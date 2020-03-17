@@ -1,15 +1,4 @@
-/*
- * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2008-present Sonatype, Inc.
- * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
- *
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
- * which accompanies this distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
- *
- * Sonatype Nexus (TM) Professional Version is available from Sonatype, Inc. "Sonatype" and "Sonatype Nexus" are trademarks
- * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
- * Eclipse Foundation. All other trademarks are the property of their respective owners.
- */
+
 package org.sonatype.nexus.repository.protop;
 
 import java.io.File;
@@ -122,7 +111,7 @@ public class ProtopUploadHandlerTest
     Asset asset = mock(Asset.class);
     when(asset.componentId()).thenReturn(new DetachedEntityId("nuId"));
     when(asset.name()).thenReturn("foo/bar/-/bar/foo-bar-123.gz");
-    when(protopFacet.putProject(any(), any())).thenReturn(asset);
+    when(protopFacet.putPackage(any(), any())).thenReturn(asset);
   }
 
   @Test
@@ -164,7 +153,7 @@ public class ProtopUploadHandlerTest
 
     assertThat(source.getVariableSet(), hasSize(5));
     assertThat(source.get("format"), is(Optional.of(ProtopFormat.NAME)));
-    assertThat(source.get("path"), is(Optional.of("@foo/bar/-/@foo-bar-1.5.3.tgz")));
+    assertThat(source.get("path"), is(Optional.of("@foo/bar/-/@foo-bar-1.5.3.tar.gz")));
     assertThat(source.get("coordinate.packageOrg"), is(Optional.of("@foo")));
     assertThat(source.get("coordinate.packageName"), is(Optional.of("bar")));
     assertThat(source.get("coordinate.version"), is(Optional.of("1.5.3")));
@@ -185,7 +174,7 @@ public class ProtopUploadHandlerTest
       fail("Expected validation exception");
     } catch (ValidationErrorsException e) {
       assertThat(e.getValidationErrors().size(), is(1));
-      assertThat(e.getValidationErrors().get(0).getMessage(), is("Not authorized for requested path '@foo/bar/-/@foo-bar-1.5.3.tgz'"));
+      assertThat(e.getValidationErrors().get(0).getMessage(), is("Not authorized for requested path '@foo/bar/-/@foo-bar-1.5.3.tar.gz'"));
     }
   }
 

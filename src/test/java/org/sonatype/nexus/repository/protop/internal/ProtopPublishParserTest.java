@@ -1,15 +1,4 @@
-/*
- * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2008-present Sonatype, Inc.
- * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
- *
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
- * which accompanies this distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
- *
- * Sonatype Nexus (TM) Professional Version is available from Sonatype, Inc. "Sonatype" and "Sonatype Nexus" are trademarks
- * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
- * Eclipse Foundation. All other trademarks are the property of their respective owners.
- */
+
 package org.sonatype.nexus.repository.protop.internal;
 
 import java.io.ByteArrayInputStream;
@@ -98,7 +87,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishJson() throws Exception {
     String file = "publish.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, NO_USER);
@@ -107,7 +96,7 @@ public class ProtopPublishParserTest
   @Test
   public void parseDeleteJson() throws Exception {
     String file = "delete.json";
-    String url = "http://localhost:10004/repository/deletePackage1x/deletePackage1x/-/deletePackage1x-1.0.tgz";
+    String url = "http://localhost:10004/repository/deletePackage1x/deletePackage1x/-/deletePackage1x-1.0.tar.gz";
     String name = "deletePackage1x";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, NO_USER);
@@ -116,7 +105,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishLocalJson() throws Exception {
     String file = "publish-local.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, NO_USER);
@@ -125,7 +114,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishLocalJsonWithUser() throws Exception {
     String file = "publish-local.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, "bob");
@@ -134,7 +123,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishLocalJsonMaintainerNotArray() throws Exception {
     String file = "publish-local-maintainer-not-array.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, NO_USER);
@@ -143,7 +132,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishLocalJsonMaintainerNotArrayWithUser() throws Exception {
     String file = "publish-local-maintainer-not-array.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, "bob");
@@ -152,7 +141,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishLocalJsonMaintainerShortenedArray() throws Exception {
     String file = "publish-local-maintainer-shortened-array.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, NO_USER);
@@ -161,7 +150,7 @@ public class ProtopPublishParserTest
   @Test
   public void parsePublishLocalJsonMaintainerShortenedArrayWithUser() throws Exception {
     String file = "publish-local-maintainer-shortened-array.json";
-    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tgz";
+    String url = "http://localhost:10004/repository/search/foo/-/foo-1.0.tar.gz";
     String name = "foo";
     String version = "1.0";
     parseFileAndAssertContents(file, url, name, version, "bob");
@@ -280,9 +269,9 @@ public class ProtopPublishParserTest
 
     NestedAttributesMap attachments = packageRoot.child("_attachments");
     assertThat(attachments.size(), is(1));
-    assertThat(attachments.child(name + "-" + version + ".tgz").get("content_type"), is("application/gzip"));
-    assertThat(attachments.child(name + "-" + version + ".tgz").get("data"), is(BLOB_ID));
-    assertThat(attachments.child(name + "-" + version + ".tgz").get("length"), is(new BigInteger("447")));
+    assertThat(attachments.child(name + "-" + version + ".tar.gz").get("content_type"), is("application/gzip"));
+    assertThat(attachments.child(name + "-" + version + ".tar.gz").get("data"), is(BLOB_ID));
+    assertThat(attachments.child(name + "-" + version + ".tar.gz").get("length"), is(new BigInteger("447")));
 
     assertThat(request.requireBlob(BLOB_ID), is(notNullValue()));
     assertThat(contentHash, is(EXPECTED_SHA1));

@@ -39,7 +39,7 @@
             "description": "A foo test project",
             "dist": {
                 "shasum": "224dd218a74827d5498661c36c0244270e837a33",
-                "tarball": "${proxyServerUrl}@foo/bar/-/bar-1.0.0.tgz"
+                "tarball": "${proxyServerUrl}@foo/bar/-/bar-1.0.0.tar.gz"
             },
             "keywords": [
                 "foo"
@@ -80,7 +80,7 @@
             "description": "A foo test project",
             "dist": {
                 "shasum": "27bd9e45f05531f8fcc096c898dae19e3bfe6191",
-                "tarball": "${proxyServerUrl}@foo/bar/-/bar-2.0.0.tgz"
+                "tarball": "${proxyServerUrl}@foo/bar/-/bar-2.0.0.tar.gz"
             },
             "keywords": [
                 "foo"
